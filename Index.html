@@ -1,0 +1,421 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Food-ROADS: Healthy Food Market Pathways Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9ECEF;--panel:#FFFFFF;--ink:#26323B;--muted:#6B7780;--rule:#D3D9DE;--head:#21384F;--head2:#2D4A66;--gtitle:#F2F4F6;--win:rgba(33,56,79,.07);
+--cap:#3B5A82;--con:#2E7D57;--ins:#C2701E;--mkt:#7A4E9C;--pol:#B03A4E;--tim:#5B6A72;--asm:#6E5C8F;--hi:#1F2E38;--lo:#C0392B;--base:#9AA5AE;--bolt:#F2C230;
+--sheet:#fff;--soft:#EEF1F3;--paper:#fff;--muted2:#8A949C;
+--capT:rgba(59,90,130,.14);--conT:rgba(46,125,87,.14);--insT:rgba(194,112,30,.15);--mktT:rgba(122,78,156,.14);--loT:rgba(192,57,43,.12);--inkT:rgba(31,46,56,.07);--mutedT:rgba(107,119,128,.1);--hiT:rgba(31,46,56,.07);
+--sans:"Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;--cond:"Roboto Condensed","Roboto",system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11171C;--panel:#1A232A;--ink:#E3E8EC;--muted:#9AA6AF;--rule:#2E3A43;--head:#0E1B27;--head2:#18293A;--gtitle:#212C34;--win:rgba(255,255,255,.05);--hi:#E3E8EC;--lo:#F07467;--base:#69757E;--sheet:#1A232A;--soft:#212C34;--paper:#1A232A;
+--cap:#8DAAD6;--con:#6CC495;--ins:#E3A15A;--mkt:#B993DB;--pol:#F07A8E;--tim:#A3B0B8;--asm:#B3A2D6}}
+:root[data-theme="dark"]{--bg:#11171C;--panel:#1A232A;--ink:#E3E8EC;--muted:#9AA6AF;--rule:#2E3A43;--head:#0E1B27;--gtitle:#212C34;--hi:#E3E8EC;--lo:#F07467;--base:#69757E;--sheet:#1A232A;--soft:#212C34;--paper:#1A232A}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.4}
+button{font:inherit;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--bolt);outline-offset:2px}
+/* header */
+.top{background:var(--head);color:#fff;display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;padding:10px 18px}
+.logo{font-family:var(--cond);font-weight:700;font-size:26px;letter-spacing:.5px;line-height:1;white-space:nowrap}
+.logo span{color:#8FD0A8}
+.tag{font-size:11px;color:#B9C7D3;max-width:190px;line-height:1.25}@media (max-width:1100px){.tag{display:none}}
+.menu{display:flex;align-items:center;gap:2px;padding:0 8px;flex:1 1 0;min-width:0;flex-wrap:wrap}
+.menu select{max-width:230px}.result{margin-left:auto}
+.menu button{background:transparent;border:0;color:#D5DEE6;padding:8px 12px;border-radius:4px;font-weight:500}
+.menu button[aria-selected="true"]{background:var(--head2);color:#fff;box-shadow:inset 0 -3px 0 var(--bolt)}
+.menu select,.menu .act{background:var(--head2);color:#fff;border:1px solid #47637E;border-radius:4px;padding:6px 8px;margin-left:6px}
+.result{display:flex;align-items:stretch;background:var(--head2)}
+.res{padding:8px 18px;text-align:center;border-left:1px solid #3D5873;min-width:150px}
+.res .lab{font-size:11px;color:#B9C7D3;text-transform:uppercase;letter-spacing:.4px}
+.res .big{font-family:var(--cond);font-size:36px;font-weight:700;line-height:1.05}
+.res .sm{font-size:11.5px;color:#B9C7D3}
+.res.main .big{color:var(--bolt);font-size:42px}
+@media (max-width:820px){.menu{flex-wrap:nowrap;flex:1 1 100%}.result{width:100%;margin-left:0}.res{flex:1;min-width:0;padding:6px 8px}.res .big{font-size:28px}.res.main .big{font-size:32px}.menu{width:100%;overflow-x:auto;padding:4px 8px}}
+/* graphs */
+.view{display:none}.view.on{display:block}
+.graphs{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
+@media (max-width:820px){.graphs{grid-template-columns:1fr}}
+.gpanel{background:var(--panel);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.gtitle{background:var(--gtitle);border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px;padding:6px 10px}
+.gtitle select{flex:1;min-width:0;font:inherit;font-weight:700;font-size:14.5px;color:var(--ink);background:transparent;border:0;padding:3px 2px;cursor:pointer}
+.gtitle .u{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.gbody{position:relative;padding:4px 6px 2px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;padding:2px 12px 8px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:5px}
+.legend i.sq{width:11px;height:11px;border:0;border-radius:2px}
+.tip{position:absolute;pointer-events:none;background:rgba(33,56,79,.94);color:#fff;font-size:12px;border-radius:4px;padding:6px 8px;display:none;z-index:3;white-space:nowrap}
+.tip b{display:block;margin-bottom:2px}
+/* insights */
+.insights{margin:0 10px;background:var(--panel);border:1px solid var(--rule);border-radius:4px;display:grid;grid-template-columns:auto 1fr;gap:0}
+@media (max-width:820px){.insights{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(3,auto);gap:0;border-right:1px solid var(--rule)}
+.k{padding:8px 16px;border-right:1px solid var(--rule)}.k:last-child{border-right:0}
+.k b{display:block;font-family:var(--cond);font-size:24px}.k span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.ins{padding:8px 14px;font-size:13px}.ins ul{margin:0;padding-left:16px}.ins li{margin:2px 0}
+/* sliders */
+.sliders{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:10px}
+@media (max-width:1200px){.sliders{grid-template-columns:repeat(3,1fr)}}@media (max-width:700px){.sliders{grid-template-columns:1fr}}
+.cat{background:var(--panel);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.cat h3{margin:0;font-family:var(--cond);font-size:14.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#fff;padding:7px 10px}
+.sl{padding:8px 10px 6px;border-bottom:1px solid var(--rule)}.sl:last-child{border-bottom:0}
+.sl .row{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.sl .name{font-weight:700;font-size:13.5px}
+.dots{background:none;border:0;color:var(--muted);font-weight:700;padding:0 4px;font-size:16px;line-height:1}
+.sl input[type=range]{width:100%;margin:6px 0 2px;accent-color:var(--c);height:22px}
+.sl .status{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+.sl .status .st{font-weight:500;color:var(--c)}
+.sl.changed{background:linear-gradient(90deg,var(--c) 0 4px,transparent 4px)}
+.pop{display:none;font-size:12.5px;color:var(--ink);background:var(--soft);border-radius:4px;padding:7px 8px;margin-top:6px}
+.pop.on{display:block}.pop .lp{font-size:11.5px;color:var(--muted);margin-top:4px}
+/* other views */
+.page{padding:12px;max-width:1200px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:14px;margin-bottom:12px}
+.card h2{font-family:var(--cond);font-size:20px;margin:0 0 8px}
+.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12.5px}th,td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}th{background:var(--gtitle)}td.n{text-align:right;font-variant-numeric:tabular-nums}
+code{font-size:11.5px;white-space:pre-wrap;word-break:break-word}
+input[type=search]{font:inherit;padding:7px 10px;border-radius:4px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);width:100%;max-width:360px}
+footer{padding:14px 12px 30px;font-size:11.5px;color:var(--muted)}
+</style></head><body>
+<header class="top">
+ <div class="brand"><div class="logo">Food<span>-</span>ROADS</div><div class="tag">Healthy Food Market Pathways Simulator · after Struben et al. (2025), MIT System Dynamics</div></div>
+ <nav class="menu" aria-label="Main menu">
+  <button data-v="sim" aria-selected="true">Simulation</button><button data-v="model" aria-selected="false">Model</button><button data-v="calib" aria-selected="false">Calibration</button><button data-v="vars" aria-selected="false">Variables</button><button data-v="help" aria-selected="false">Help</button>
+  <select id="preset" aria-label="Scenarios"><option value="">Scenarios…</option></select>
+  <button class="act" id="reset" title="Reset all sliders to status quo">Reset</button>
+ </nav>
+ <div class="result" aria-live="polite">
+  <div class="res main"><div class="lab">Low-SES healthy share 2042</div><div class="big" id="rMain">30%</div><div class="sm" id="rMainS">Baseline 30%</div></div>
+  <div class="res"><div class="lab">Equity gap 2042</div><div class="big" id="rGap">15.5</div><div class="sm">points (baseline 15.5)</div></div>
+ </div>
+</header>
+
+<section class="view on" id="v-sim">
+ <div class="graphs">
+  <div class="gpanel"><div class="gtitle"><select id="g1" aria-label="Left graph"></select><span class="u" id="u1"></span></div><div class="gbody" id="gb1"></div><div class="legend" id="lg1"></div></div>
+  <div class="gpanel"><div class="gtitle"><select id="g2" aria-label="Right graph"></select><span class="u" id="u2"></span></div><div class="gbody" id="gb2"></div><div class="legend" id="lg2"></div></div>
+ </div>
+ <div class="insights"><div class="kgrid"><div class="k"><span>Scale vs baseline</span><b id="kS">0%</b></div><div class="k"><span>Equity gap vs baseline</span><b id="kG">0%</b></div><div class="k"><span>Firm HF R&amp;D 2022–42</span><b id="kR">0%</b></div></div><div class="ins"><ul id="ins"></ul></div></div>
+ <div class="sliders" id="sliders"></div>
+</section>
+
+<section class="view" id="v-model"><div class="page">
+ <div class="card"><h2>Four reinforcing loops</h2><p>Affinity to consume healthy food depends on category consideration, product utility (attribute states weighted by each segment's sensitivity) and the built food environment. Four reinforcing loops close back on consumption: R1 socio-behavioural, R2 marketing, R3 product, R4 built environment. Highlighted tags show the interventions in your current scenario.</p><div id="cldM"></div></div>
+ <div class="card"><h2>Stocks and flows</h2><div id="sfM"></div></div>
+ <div class="card"><h2>Firm decisions: nested budget hierarchy</h2><div id="budM"></div></div>
+ <div class="card"><h2>Who can intervene, and where</h2><div id="matM"></div></div>
+</div></section>
+
+<section class="view" id="v-calib"><div class="page"><div class="card"><h2>Reconstruction versus Struben's published runs</h2><p>Baselines come from Struben's slides; behavioral parameters were estimated so the scenario trajectories match his charts.</p><div class="tablewrap"><table id="calT"><thead><tr><th>Scenario</th><th>Variable</th><th>Year</th><th>Struben (chart)</th><th>This model</th></tr></thead><tbody></tbody></table></div>
+<h2 style="margin-top:14px">Impact metrics, 2042 vs baseline</h2><div class="tablewrap"><table id="metT"><thead><tr><th>Scenario</th><th>Scale</th><th>Equity gap</th><th>Firm HF R&amp;D 2022–42</th><th>Low-SES share 2042</th></tr></thead><tbody></tbody></table></div>
+<p style="font-size:12.5px;color:var(--muted)">Struben reported for convergent innovation: scale +39%, equity gap −45%, R&amp;D efforts +40%.</p></div></div></section>
+
+<section class="view" id="v-vars"><div class="page"><div class="card"><h2>Variables and equations</h2><p style="font-size:12.5px;color:var(--muted)">Identical to Food_Market_Transformation_Struben_SD.mdl (Vensim).</p><input type="search" id="vq" placeholder="Search variables" aria-label="Search variables"><div class="tablewrap" style="margin-top:8px"><table id="varT"><thead><tr><th>Variable</th><th>Sector</th><th>Equation</th><th>Units</th><th>Meaning</th></tr></thead><tbody></tbody></table></div></div></div></section>
+
+<section class="view" id="v-help"><div class="page"><div class="card"><h2>How to use Food-ROADS</h2>
+<p><b>Every slider starts at status quo.</b> Move a slider to add an intervention; the colored bar on its left marks what you changed. Click ⋯ for what the lever does and which loop it acts on.</p>
+<p><b>Read the two graphs.</b> Choose any output in each graph's title menu. The thin gray line is the baseline; the bold lines are your scenario. Hover or touch a graph to read values. The shaded band is the intervention period.</p>
+<p><b>Watch the headline.</b> The yellow number is the low-SES healthy-food share in 2042, the model's equivalent of En-ROADS' temperature: the outcome that tells you whether the market is transforming for everyone.</p>
+<p><b>Try the scenarios menu</b> for Struben's experiments, then build your own combination. A pathway is convincing when it raises scale, closes the gap, and keeps firms investing after the program ends.</p>
+<p><b>Assumptions</b> (last column) let you stress-test structure. Conclusions worth presenting should survive reasonable changes.</p>
+<p style="font-size:12.5px;color:var(--muted)">Stylized model for strategic discussion, not a forecast. Look and feel inspired by En-ROADS (Climate Interactive and MIT Sloan); this tool is not affiliated with them.</p></div></div></section>
+
+<footer>Model: Struben, J., Chan, D., Talukder, B. &amp; Dubé, L. (2025). Market pathways to food systems transformation toward healthy and equitable diets through convergent innovation. Nature Communications 16:4246. Reconstruction and calibration: this study. Same equations as the Vensim and Excel versions.</footer>
+<script>// JS port of food_market_transformation.mdl (Euler, identical equations). Used by the HTML simulator.
+var FoodSD=(function(){
+const DEF={start:2020,end:2042,dt:0.0625,
+ intStart:2022,intDur:5,sustain:0,
+ sw1a:0,sw1bS:0,sw1bT:0,sw1c:0,sw2a:0,sw2b:0,sw3:0,
+ eduH:0.035,eduL:0.012,subsidy:0.15,tax:0.15,accH:0.015,accL:0.055,fund:0.2,boost:2.2,crowd:0.5,
+ popH:0.5,s0H:0.455,s0L:0.30,ce:1.85,ae:0.45,tsH:0.8,tsL:0.56,psH:0.46,psL:1.0,
+ capRet:0.3,qcp:0.3,vetp:0.22,life:8,tasteAlloc:0.5,
+ c0H:0.44,c0L:0.40,memT:7,si:0.1,mktEff:0.95,
+ a0H:0.455,a0L:0.30,accT:10,appealE:0.5,
+ revT:1,budInt:0.365,rdI0:0.155,mkI0:0.21,rd0:0.155/0.365,prodResp:0.6,satResp:0.3,adjT:5};
+function run(over){
+ const p=Object.assign({},DEF,over||{});
+ const pop={H:p.popH,L:1-p.popH}, s0={H:p.s0H,L:p.s0L}, c0={H:p.c0H,L:p.c0L}, a0={H:p.a0H,L:p.a0L};
+ const ts={H:p.tsH,L:p.tsL}, ps={H:p.psH,L:p.psL}, edu={H:p.eduH,L:p.eduL}, acc={H:p.accH,L:p.accL};
+ const baseAff={H:s0.H/(1-s0.H),L:s0.L/(1-s0.L)};
+ const rev0=pop.H*s0.H+pop.L*s0.L, rd0Bud=p.budInt*rev0*p.rd0;
+ const tc0=p.life*rd0Bud*p.tasteAlloc, cc0=p.life*rd0Bud*(1-p.tasteAlloc);
+ // background exposure (INITIAL)
+ const mkt0=p.budInt*rev0*(1-p.rd0);
+ const bg={};['H','L'].forEach(g=>{const alloc=pop[g]*s0[g]/rev0;const mexp=p.mktEff*mkt0*alloc/pop[g];bg[g]=c0[g]/((1-c0[g])*p.memT)-p.si*s0[g]-mexp;});
+ const avgC0=pop.H*c0.H+pop.L*c0.L, gap0=s0.H-s0.L, tot0=rev0;
+ let st={C:{H:c0.H,L:c0.L},A:{H:a0.H,L:a0.L},TC:tc0,CC:cc0,RS:p.rd0,PR:rev0,TI:p.budInt};
+ const out=[]; const n=Math.round((p.end-p.start)/p.dt);
+ for(let i=0;i<=n;i++){
+  const t=p.start+i*p.dt;
+  const win=(t>=p.intStart-1e-9 && t<p.intStart+p.intDur-1e-9)?1:((p.sustain&&t>=p.intStart-1e-9)?1:0);
+  const rdProd=1+p.sw3*win*p.boost;
+  const taste=Math.pow(st.TC/tc0,p.capRet)*Math.pow(st.CC/cc0,-p.vetp);
+  const price=Math.pow(st.CC/cc0,p.capRet)*Math.pow(st.TC/tc0,-p.qcp)*(1+p.sw1bS*win*p.subsidy);
+  const S={},U={},aff={};
+  ['H','L'].forEach(g=>{U[g]=ts[g]*Math.log(taste)+ps[g]*Math.log(price);
+   aff[g]=baseAff[g]*Math.pow(st.C[g]/c0[g],p.ce)*Math.pow(st.A[g]/a0[g],p.ae)*Math.exp(U[g]);
+   const lh=Math.pow(1+p.sw1bT*win*p.tax,-ps[g]); S[g]=aff[g]/(aff[g]+lh);});
+  const rev=pop.H*S.H+pop.L*S.L;
+  const totBud=st.TI*st.PR;
+  const fa=p.fundA!=null?p.fundA:p.fund, fb=p.fundB!=null?p.fundB:p.fund;
+  const ext=(p.sw2a*fa+p.sw2b*fb)*win*rd0Bud;
+  const firmRD=Math.max(0,totBud*st.RS-p.crowd*ext);
+  const mktB=totBud*(1-st.RS);
+  const avgC=pop.H*st.C.H+pop.L*st.C.L;
+  const eff=Math.pow(rdProd,p.prodResp);
+  const desRD=p.rdI0*eff, desMK=p.mkI0*Math.pow((1-avgC0)/(1-avgC),-p.satResp);
+  const des=desRD/(desRD+desMK), desTI=desRD+desMK;
+  const appeal=Math.pow(taste*price,p.appealE);
+  if(i%4===0) out.push({t:+t.toFixed(2),SH:S.H,SL:S.L,tot:rev,gap:S.H-S.L,CH:st.C.H,CL:st.C.L,AH:st.A.H,AL:st.A.L,taste,price,UH:U.H,UL:U.L,rdRel:firmRD/rev,mkRel:mktB/rev,rdShare:st.RS,budInt:st.TI,scale:rev/tot0,gapRel:(S.H-S.L)/gap0});
+  // flows
+  const dC={},dA={};
+  ['H','L'].forEach(g=>{const alloc=pop[g]*S[g]/rev;const mexp=p.mktEff*mktB*alloc/pop[g];
+   dC[g]=(1-st.C[g])*(bg[g]+p.si*S[g]+mexp+p.sw1a*win*edu[g])-st.C[g]/p.memT;
+   const ind=Math.min(1,S[g]*appeal); dA[g]=(ind-st.A[g])/p.accT+p.sw1c*win*acc[g];});
+  const tb=rdProd*(firmRD*p.tasteAlloc+p.sw2a*win*fa*rd0Bud), cb=rdProd*(firmRD*(1-p.tasteAlloc)+p.sw2b*win*fb*rd0Bud);
+  st.C.H+=p.dt*dC.H; st.C.L+=p.dt*dC.L; st.A.H+=p.dt*dA.H; st.A.L+=p.dt*dA.L;
+  st.TC+=p.dt*(tb-st.TC/p.life); st.CC+=p.dt*(cb-st.CC/p.life);
+  st.RS+=p.dt*(des-st.RS)/p.adjT; st.TI+=p.dt*(desTI-st.TI)/p.adjT; st.PR+=p.dt*(rev-st.PR)/p.revT;
+ }
+ return out;
+}
+const SCEN={
+ base:{label:'Baseline',set:{}},
+ s1:{label:'1a Public nutritious-food exposure (low-SES)',set:{sw1a:1,eduH:0}},
+ s2a:{label:'2a High-end nutritious innovation',set:{sw2a:1}},
+ s2b:{label:'2b Affordable nutritious innovation',set:{sw2b:1}},
+ s3:{label:'3 Directed technical change',set:{sw3:1}},
+ s4:{label:'4 Convergent innovation',set:{sw3:1,sw1a:1,sw1c:1}}};
+return {run,DEF,SCEN};
+})();
+
+</script><script>var Dg=(function(){
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,p,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;if(p)p.appendChild(e);return e;}
+function svg(host,w,h,label,maxW){const s=el('svg',{viewBox:`0 0 ${w} ${h}`,width:'100%',role:'img','aria-label':label||''});s.style.display='block';s.style.margin='0 auto';s.style.maxWidth=(maxW||w)+'px';host.appendChild(s);
+ const d=el('defs',{},s);['ink','con','cap','ins','mkt','lo','muted','hi'].forEach(c=>{const m=el('marker',{id:`m-${c}-${host.id}`,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},d);el('path',{d:'M0,0L10,5L0,10z',style:`fill:var(--${c})`},m);});return s;}
+function txt(s,x,y,str,o={}){const t=el('text',{x,y,'text-anchor':o.a||'middle','dominant-baseline':'middle'},s);t.style.fill=o.c||'var(--ink)';t.style.fontSize=(o.sz||13)+'px';if(o.w)t.style.fontWeight=o.w;if(o.i)t.style.fontStyle='italic';t.style.fontFamily='var(--sans)';
+ const L=String(str).split('\n');if(L.length===1)t.textContent=str;else{const lh=(o.sz||13)*1.18;L.forEach((l,i)=>{const sp=el('tspan',{x,dy:i?lh:-(L.length-1)*lh/2},t);sp.textContent=l;});}return t;}
+function node(s,n){const w=n.w||150,h=n.h||(n.l.includes('\n')?44:32);
+ if(n.stock){const r=el('rect',{x:n.x-w/2,y:n.y-h/2,width:w,height:h,rx:3},s);r.style.fill=`var(--${n.c}T)`;r.style.stroke=`var(--${n.c})`;r.style.strokeWidth=2.4;
+   const r2=el('rect',{x:n.x-w/2+4,y:n.y-h/2+4,width:w-8,height:h-8,rx:2},s);r2.style.fill='none';r2.style.stroke=`var(--${n.c})`;r2.style.strokeWidth=0.8;}
+ else{const r=el('rect',{x:n.x-w/2,y:n.y-h/2,width:w,height:h,rx:h/2},s);r.style.fill='var(--sheet)';r.style.stroke=n.c?`var(--${n.c})`:'var(--rule)';r.style.strokeWidth=n.c?1.4:1;}
+ txt(s,n.x,n.y,n.l,{sz:n.sz||12.5,w:n.stock?700:600,c:n.stock?`var(--${n.c})`:'var(--ink)'});n.w=w;n.h=h;return n;}
+function clip(n,px,py){const dx=px-n.x,dy=py-n.y;const t=Math.min((n.w/2+5)/Math.abs(dx||1e-6),(n.h/2+5)/Math.abs(dy||1e-6));return [n.x+dx*t,n.y+dy*t];}
+function arrow(s,host,a,b,c,o={}){let cx,cy;if(o.cp){[cx,cy]=o.cp;}else{const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dx=b.x-a.x,dy=b.y-a.y,bd=o.bend||0;cx=mx-dy*bd;cy=my+dx*bd;}
+ const p1=clip(a,cx,cy),p2=clip(b,cx,cy);const p=el('path',{d:`M${p1[0]},${p1[1]} Q${cx},${cy} ${p2[0]},${p2[1]}`,fill:'none','marker-end':`url(#m-${c}-${host.id})`},s);p.style.stroke=`var(--${c})`;p.style.strokeWidth=o.sw||1.9;if(o.dash)p.style.strokeDasharray=o.dash;
+ if(o.sign){const qx=.25*p1[0]+.5*cx+.25*p2[0],qy=.25*p1[1]+.5*cy+.25*p2[1];txt(s,qx+(o.sx||7),qy+(o.sy||-7),o.sign,{sz:13,w:700,c:`var(--${c})`});}return p;}
+function loop(s,x,y,lab,name,c){const g=el('circle',{cx:x,cy:y,r:19},s);g.style.fill=`var(--${c}T)`;g.style.stroke=`var(--${c})`;g.style.strokeWidth=1.5;txt(s,x,y,lab,{sz:13,w:700,c:`var(--${c})`});txt(s,x,y+31,name,{sz:11.5,i:1,c:`var(--${c})`});}
+function lever(s,host,x,y,code,target,active){const r=el('rect',{x:x-17,y:y-11,width:34,height:22,rx:11},s);r.style.fill=active?'var(--bolt)':'var(--soft)';r.style.stroke=active?'var(--bolt)':'var(--muted)';r.style.strokeDasharray=active?'':'3 2';
+ txt(s,x,y,code,{sz:11,w:700,c:active?'#1C2A23':'var(--muted)'});arrow(s,host,{x,y,w:34,h:22},{x:target.x,y:target.y,w:target.w,h:target.h},'muted',{dash:'3 3',sw:1.2});}
+// ---- Struben 4-loop CLD ----
+function cld(host,act){act=act||{};const s=svg(host,940,660,'Causal loop diagram, four reinforcing loops',980);
+ const N={
+  cons:node(s,{x:440,y:52,l:'Food category\nconsumption',w:150,h:46,c:'ink'}),
+  rein:node(s,{x:715,y:52,l:'Firm reinvestment',w:140}),
+  res:node(s,{x:770,y:165,l:'Firm resources to\nfood category',w:150}),
+  soc:node(s,{x:470,y:165,l:'Social pressure\n& habituation',w:140}),
+  aff:node(s,{x:135,y:150,l:'Affinity to\nconsume',w:120}),
+  con:node(s,{x:330,y:285,l:'Category\nconsideration',w:150,h:50,stock:1,c:'con'}),
+  mkt:node(s,{x:610,y:285,l:'Marketing\nspending',w:120,c:'mkt'}),
+  rd:node(s,{x:820,y:290,l:'R&D spending',w:120,c:'cap'}),
+  cap:node(s,{x:770,y:420,l:'Industry\ncapabilities',w:150,h:50,stock:1,c:'cap'}),
+  util:node(s,{x:110,y:385,l:'Product\nutility',w:110}),
+  sens:node(s,{x:300,y:430,l:'Attribute\nsensitivity',w:120}),
+  attr:node(s,{x:540,y:510,l:'Attribute state\nprice · taste · variety · nutrition',w:220,h:46}),
+  ins:node(s,{x:310,y:600,l:'Systems &\ninstitutions',w:150,h:50,stock:1,c:'ins'})};
+ const A=(a,b,c,o)=>arrow(s,host,N[a],N[b],c,Object.assign({sign:'+'},o||{}));
+ A('cons','soc','con',{bend:.1});A('soc','con','con',{bend:.12});A('con','aff','con',{bend:-.15});A('aff','cons','con',{bend:.18});
+ A('cons','rein','mkt',{bend:-.08});A('rein','res','mkt',{bend:-.1});A('cons','res','mkt',{bend:.05,sign:''});A('res','mkt','mkt',{bend:-.08});A('mkt','con','mkt',{bend:-.05,sy:12});
+ A('res','rd','cap',{bend:-.12});A('rd','cap','cap',{bend:-.1});A('cap','attr','cap',{bend:-.12});A('attr','util','cap',{cp:[260,520]});A('sens','util','muted',{bend:.1,sign:''});A('util','aff','cap',{bend:-.1});
+ A('cons','ins','ins',{cp:[1060,470],sx:-14});A('attr','ins','ins',{bend:-.1,sx:-10,sy:8});A('ins','aff','ins',{cp:[10,560],sx:12});
+ loop(s,270,130,'R1','Socio-behavioural','con');loop(s,560,215,'R2','Marketing','mkt');loop(s,560,385,'R3','Product','cap');loop(s,150,520,'R4','Built environment','ins');
+ if(act!==false){lever(s,host,345,360,'1a',N.con,act.sw1a);lever(s,host,215,455,'1a',N.sens,act.sw1a);lever(s,host,690,555,'1b',N.attr,act.sw1bS||act.sw1bT);lever(s,host,505,620,'1c',N.ins,act.sw1c);
+  lever(s,host,885,120,'2a/b',N.res,act.sw2a||act.sw2b);lever(s,host,900,360,'3',N.rd,act.sw3);}
+ return s;}
+// ---- Stock & flow overview ----
+function stockflow(host){const W=980,H=360;const s=svg(host,W,H,'Stock and flow structure',1000);
+ const rows=[['con','Category consideration','Background · social pressure · marketing · education (1a)','Forgetting (memory time)'],['cap','Industry capabilities (taste, cost)','R&D × productivity (3) + innovation funds (2a/2b)','Obsolescence (lifetime)'],['ins','Systems & institutions','Private access following demand + public programs (1c)','Erosion toward demand-supported level'],['mkt','Firm budget (R&D share, intensity)','Adjust toward desired R&D and marketing budgets','(goal-seeking, balancing)']];
+ rows.forEach((r,i)=>{const y=48+i*88;const C=r[0];
+  [40,W-40].forEach(x=>{const c=el('ellipse',{cx:x,cy:y,rx:16,ry:10},s);c.style.fill='var(--soft)';c.style.stroke='var(--muted)';});
+  [[58,380],[600,W-58]].forEach(([a,b])=>{const l=el('line',{x1:a,y1:y,x2:b,y2:y,'marker-end':`url(#m-${C}-${host.id})`},s);l.style.stroke=`var(--${C})`;l.style.strokeWidth=5;});
+  [210,770].forEach(x=>{const p=el('path',{d:`M${x-11},${y-11}L${x+11},${y+11}L${x+11},${y-11}L${x-11},${y+11}z`},s);p.style.fill=`var(--${C})`;});
+  const b=el('rect',{x:385,y:y-27,width:210,height:54,rx:3},s);b.style.fill=`var(--${C}T)`;b.style.stroke=`var(--${C})`;b.style.strokeWidth=2.2;
+  txt(s,490,y,r[1].replace(' (','\n('),{sz:13.5,w:700,c:`var(--${C})`});txt(s,210,y+28,r[2],{sz:11,c:'var(--muted)'});txt(s,770,y+28,r[3],{sz:11,c:'var(--muted)'});});
+ return s;}
+// ---- Budget hierarchy ----
+function budget(host){const W=900,H=400;const s=svg(host,W,H,'Nested budget hierarchy',900);
+ const B=(x,y,l,c,w)=>node(s,{x,y,l,c,w:w||130,h:34});
+ const tot=B(450,36,'Total budget','ink',140),lh=B(250,120,'Low-health food','muted'),hf=B(650,120,'Healthy food','con');
+ const lr=B(150,205,'LH R&D','muted',100),lm=B(330,205,'LH marketing','muted',120),hr=B(560,205,'HF R&D','cap',100),hm=B(760,205,'HF marketing','mkt',120);
+ [[tot,lh],[tot,hf],[lh,lr],[lh,lm],[hf,hr],[hf,hm]].forEach(([a,b])=>arrow(s,host,a,b,'muted',{sw:1.4}));
+ const leaf=(x,l,c)=>{const n=B(x,300,l,c,96);return n;};
+ [['Cost',490],['Taste',545],['Variety',600],['Nutrition',655]].forEach(([l,x],i)=>{const n=node(s,{x:440+i*60,y:300,l,c:'cap',w:58,h:30,sz:11});arrow(s,host,hr,n,'cap',{sw:1.1});});
+ [['High-SES',735],['Low-SES',830]].forEach(([l,x])=>{const n=node(s,{x,y:300,l,c:'mkt',w:84,h:30,sz:11.5});arrow(s,host,hm,n,'mkt',{sw:1.1});});
+ txt(s,450,368,'Budgets adjust by "learning from the market": desired R&D rises with perceived returns (R: R&D budget scaling);',{sz:12,i:1,c:'var(--muted)'});
+ txt(s,450,388,'the R&D share closes the gap to its desired level over the time to adjust budget (B: R&D budget correction).',{sz:12,i:1,c:'var(--muted)'});return s;}
+// ---- Intervention matrix ----
+function matrix(host,act){act=act||{};const W=960,H=380;const s=svg(host,W,H,'Intervention typology',980);
+ const cols=[['Build industry capabilities','cap'],['Form category consideration','con'],['Develop systems & institutions','ins']];const rows=['For-profit producers','Non-profits','Governments','Cross-sector cooperation'];
+ const x0=230,cw=(W-x0-10)/3,y0=60,rh=74;
+ cols.forEach((c,i)=>{const r=el('rect',{x:x0+i*cw,y:8,width:cw-6,height:44,rx:6},s);r.style.fill=`var(--${c[1]}T)`;txt(s,x0+i*cw+cw/2-3,30,c[0],{sz:13,w:700,c:`var(--${c[1]})`});});
+ rows.forEach((r,i)=>{txt(s,12,y0+i*rh+rh/2,r,{a:'start',sz:13,w:700});const l=el('line',{x1:0,x2:W,y1:y0+(i+1)*rh,y2:y0+(i+1)*rh},s);l.style.stroke='var(--rule)';});
+ const bar=(row,c0,c1,lab,on)=>{const x=x0+c0*cw+8,w=(c1-c0)*cw-22,y=y0+row*rh+(rh-34)/2;const r=el('rect',{x,y,width:w,height:34,rx:6},s);r.style.fill=on?'var(--bolt)':'var(--ink)';r.style.opacity=on?1:.82;txt(s,x+w/2,y+17,lab,{sz:12,w:700,c:on?'#1C2A23':'var(--paper)'});};
+ bar(0,0,.98,'2a High-end innovation',act.sw2a);bar(0,1,1.9,'2b Affordable innovation',act.sw2b);
+ bar(1,1,1.98,'1a Consumer education',act.sw1a);bar(1,2,2.98,'1c Food accessibility',act.sw1c);
+ bar(2,0,0.98,'3 Directed technical change',act.sw3);bar(2,1,2,'1b Subsidies & taxes',act.sw1bS||act.sw1bT);
+ bar(3,0,3,'4 Convergent innovation: 3 + 1a + 1c',act.sw3&&act.sw1a&&act.sw1c);return s;}
+// ---- Line chart ----
+function line(host,series,o={}){host.innerHTML='';const W=o.w||520,H=o.h||280,m={l:46,r:14,t:28,b:30};const s=svg(host,W,H,o.title||'chart',o.maxW||W);
+ const x0=2020,x1=2042;let lo=o.min,hi=o.max;if(lo==null||hi==null){let mn=1e9,mx=-1e9;series.forEach(se=>se.v.forEach(v=>{mn=Math.min(mn,v);mx=Math.max(mx,v);}));const pad=(mx-mn)*.15||.02;lo=lo??Math.floor((mn-pad)*50)/50;hi=hi??Math.ceil((mx+pad)*50)/50;}
+ const X=t=>m.l+(t-x0)/(x1-x0)*(W-m.l-m.r),Y=v=>H-m.b-(v-lo)/(hi-lo)*(H-m.t-m.b);
+ if(o.title)txt(s,m.l,12,o.title,{a:'start',sz:13,w:700});
+ if(o.win){const r=el('rect',{x:X(o.win[0]),y:m.t,width:X(Math.min(x1,o.win[1]))-X(o.win[0]),height:H-m.t-m.b},s);r.style.fill='var(--win)';}
+ for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4;const g=el('line',{x1:m.l,x2:W-m.r,y1:Y(v),y2:Y(v)},s);g.style.stroke='var(--rule)';txt(s,m.l-6,Y(v),o.pct?Math.round(v*100)+'%':v.toFixed(2),{a:'end',sz:10.5,c:'var(--muted)'});}
+ [2020,2025,2030,2035,2040].forEach(t=>txt(s,X(t),H-m.b+14,t,{sz:10.5,c:'var(--muted)'}));
+ const labs=[];series.forEach(se=>{const d=se.v.map((v,i)=>(i?'L':'M')+X(se.t[i]).toFixed(1)+','+Y(v).toFixed(1)).join('');const p=el('path',{d,fill:'none'},s);p.style.stroke=se.c;p.style.strokeWidth=se.w||2.4;if(se.dash)p.style.strokeDasharray=se.dash;
+  if(se.lab)labs.push({y:Y(se.v[se.v.length-1])-9,t:se.lab,c:se.c});});
+ labs.sort((a,b)=>a.y-b.y);for(let i=1;i<labs.length;i++)if(labs[i].y-labs[i-1].y<13)labs[i].y=labs[i-1].y+13;labs.forEach(l=>txt(s,W-m.r-2,Math.max(m.t+6,Math.min(H-m.b-4,l.y)),l.t,{a:'end',sz:11,w:700,c:l.c}));return s;}
+return {cld,stockflow,budget,matrix,line,svg,txt,el};
+})();
+</script>
+<script>
+const VARS=[["Intervention Start", "2022", "Year [2020,2040,1]", "Year interventions begin.", "Interventions"], ["Intervention Duration", "5", "Year [1,20,1]", "Length of intervention period (5 years in the paper).", "Interventions"], ["Sustain Interventions", "0", "Dmnl [0,1,1]", "1 = interventions continue to FINAL TIME (sensitivity case).", "Interventions"], ["Intervention Window", "IF THEN ELSE( Time >= Intervention Start :AND: Time < Intervention Start + Intervention Duration , 1, IF THEN ELSE( Sustain Interventions = 1 :AND: Time >= Intervention Start , 1 , 0 ) )", "Dmnl", "1 during the intervention period.", "Interventions"], ["Switch 1a Consumer Education", "0", "Dmnl [0,1,1]", "1a: non-profit / public education and exposure programs.", "Interventions"], ["Switch 1b HF Subsidy", "0", "Dmnl [0,1,1]", "1b: government subsidy on healthy food (price).", "Interventions"], ["Switch 1b LH Tax", "0", "Dmnl [0,1,1]", "1b: government tax on low-health food.", "Interventions"], ["Switch 1c Food Accessibility", "0", "Dmnl [0,1,1]", "1c: food accessibility improvement (corner stores, school food).", "Interventions"], ["Switch 2a High End Innovation", "0", "Dmnl [0,1,1]", "2a: firms fund high-end (taste-led) nutritious innovation.", "Interventions"], ["Switch 2b Affordable Innovation", "0", "Dmnl [0,1,1]", "2b: firms fund affordable (cost-led) nutritious innovation.", "Interventions"], ["Switch 3 Directed Technical Change", "0", "Dmnl [0,1,1]", "3: government stimulates HF innovation across the supply chain (R&D support, standards, networks).", "Interventions"], ["Education Intensity[Segment]", "0.035, 0.012", "1/Year [0,0.2,0.002]", "Added exposure rate from education campaigns, by segment.", "Interventions"], ["HF Subsidy Rate", "0.15", "Dmnl [0,0.5,0.01]", "Fractional improvement of HF price performance from subsidy.", "Interventions"], ["LH Tax Rate", "0.15", "Dmnl [0,0.5,0.01]", "Fractional price increase on low-health food.", "Interventions"], ["Access Program Effort[Segment]", "0.015, 0.055", "1/Year [0,0.1,0.005]", "Publicly funded accessibility built per year, by segment.", "Interventions"], ["Innovation Funding Size", "0.2", "Dmnl [0,3,0.1]", "External innovation funding as a multiple of baseline firm HF R&D.", "Interventions"], ["Directed Change Productivity Boost", "2.2", "Dmnl [0,4,0.1]", "Added R&D productivity under directed technical change.", "Interventions"], ["Crowding Out Fraction", "0.5", "Dmnl [0,1,0.05]", "Share of external innovation funding that firms subtract from their own R&D.", "Interventions"], ["Population Fraction[Segment]", "0.5, 0.5", "Dmnl", "High- vs low-SES split (approx. 50/50 by income-education index).", "Consumption"], ["Initial HF Share[Segment]", "0.455, 0.3", "Dmnl", "Baseline healthy-food share of consumption (Struben et al., Quebec data, stylized).", "Consumption"], ["Base HF Affinity[Segment]", "Initial HF Share[Segment] / ( 1 - Initial HF Share[Segment] )", "Dmnl", "Calibrates the logit so the baseline is an equilibrium.", "Consumption"], ["Consideration Elasticity", "1.85", "Dmnl [0,3,0.1]", "Response of affinity to category consideration.", "Consumption"], ["Access Elasticity", "0.45", "Dmnl [0,3,0.1]", "Response of affinity to systems & institutions (accessibility).", "Consumption"], ["Affinity to Consume HF[Segment]", "Base HF Affinity[Segment] * ( HF Category Consideration[Segment] / Initial HF Consideration[Segment] ) ^ Consideration Elasticity * ( HF Food Accessibility[Segment] / Initial HF Accessibility[Segment] ) ^ Access Elasticity * EXP( HF Product Utility[Segment] )", "Dmnl", "Affinity to consume healthy food (relative to low-health food).", "Consumption"], ["Affinity to Consume LH[Segment]", "( 1 + Switch 1b LH Tax * Intervention Window * LH Tax Rate ) ^ ( - Price Sensitivity[Segment] )", "Dmnl", "Low-health food affinity; taxed LH becomes less attractive.", "Consumption"], ["HF Share[Segment]", "Affinity to Consume HF[Segment] / ( Affinity to Consume HF[Segment] + Affinity to Consume LH[Segment] )", "Dmnl", "Healthy food share of consumption (logit choice).", "Consumption"], ["Total HF Share", "SUM( Population Fraction[Segment!] * HF Share[Segment!] )", "Dmnl", "Population-weighted HF share (scale).", "Outcomes"], ["Equity Gap", "HF Share[High SES] - HF Share[Low SES]", "Dmnl", "High-SES minus low-SES HF share.", "Outcomes"], ["Relative Scale", "Total HF Share / INITIAL( Total HF Share )", "Dmnl", "Scale vs 2020.", "Outcomes"], ["Relative Equity Gap", "Equity Gap / INITIAL( Equity Gap )", "Dmnl", "Gap vs 2020.", "Outcomes"], ["Taste Sensitivity[Segment]", "0.8, 0.56", "Dmnl", "Attribute sensitivity to taste (higher for high SES).", "Product"], ["Price Sensitivity[Segment]", "0.46, 1", "Dmnl", "Attribute sensitivity to price (higher for low SES).", "Product"], ["HF Product Utility[Segment]", "Taste Sensitivity[Segment] * LN( Taste Attribute State ) + Price Sensitivity[Segment] * LN( Price Attribute State )", "Dmnl", "Product utility from attribute states (0 at baseline).", "Product"], ["Capability Returns", "0.3", "Dmnl [0.2,1,0.05]", "Diminishing returns of capability to attribute performance.", "Product"], ["Quality Cost Penalty", "0.3", "Dmnl [0,1,0.05]", "Taste-led innovation raises cost (lowers price performance).", "Product"], ["Value Engineering Taste Penalty", "0.22", "Dmnl [0,1,0.05]", "Cost-led innovation lowers taste.", "Product"], ["Taste Attribute State", "( HF Taste Capability / Initial Taste Capability ) ^ Capability Returns * ( HF Cost Capability / Initial Cost Capability ) ^ ( - Value Engineering Taste Penalty )", "Dmnl", "Taste performance of HF (1 = 2020).", "Product"], ["Price Attribute State", "( HF Cost Capability / Initial Cost Capability ) ^ Capability Returns * ( HF Taste Capability / Initial Taste Capability ) ^ ( - Quality Cost Penalty ) * ( 1 + Switch 1b HF Subsidy * Intervention Window * HF Subsidy Rate )", "Dmnl", "Price performance of HF (higher = cheaper; 1 = 2020).", "Product"], ["Capability Lifetime", "8", "Year [2,20,1]", "Average time before capabilities become obsolete.", "Capabilities"], ["Taste R&D Allocation", "0.5", "Dmnl [0,1,0.05]", "Share of firm HF R&D aimed at taste/variety/nutrition vs cost.", "Capabilities"], ["R&D Productivity", "1 + Switch 3 Directed Technical Change * Intervention Window * Directed Change Productivity Boost", "Dmnl", "Capability built per unit of R&D.", "Capabilities"], ["External Innovation Funding", "( Switch 2a High End Innovation + Switch 2b Affordable Innovation ) * Intervention Window * Innovation Funding Size * Initial Firm HF R&D Budget", "Index/Year", "Innovation money from 2a/2b programs.", "Capabilities"], ["Taste Capability Building", "R&D Productivity * ( Firm HF R&D Budget * Taste R&D Allocation + Switch 2a High End Innovation * Intervention Window * Innovation Funding Size * Initial Firm HF R&D Budget )", "Index/Year", "Inflow to taste capabilities.", "Capabilities"], ["Cost Capability Building", "R&D Productivity * ( Firm HF R&D Budget * ( 1 - Taste R&D Allocation ) + Switch 2b Affordable Innovation * Intervention Window * Innovation Funding Size * Initial Firm HF R&D Budget )", "Index/Year", "Inflow to cost capabilities.", "Capabilities"], ["Taste Capability Obsolescence", "HF Taste Capability / Capability Lifetime", "Index/Year", "", "Capabilities"], ["Cost Capability Obsolescence", "HF Cost Capability / Capability Lifetime", "Index/Year", "", "Capabilities"], ["Initial Taste Capability", "Capability Lifetime * Initial Firm HF R&D Budget * Taste R&D Allocation", "Index", "Equilibrium initial value.", "Capabilities"], ["Initial Cost Capability", "Capability Lifetime * Initial Firm HF R&D Budget * ( 1 - Taste R&D Allocation )", "Index", "Equilibrium initial value.", "Capabilities"], ["HF Taste Capability", "INTEG( Taste Capability Building - Taste Capability Obsolescence , Initial Taste Capability )", "Index", "STOCK - Industry capabilities (taste, variety, nutrition).", "Capabilities"], ["HF Cost Capability", "INTEG( Cost Capability Building - Cost Capability Obsolescence , Initial Cost Capability )", "Index", "STOCK - Industry capabilities (cost / price).", "Capabilities"], ["Initial HF Consideration[Segment]", "0.44, 0.4", "Dmnl", "Baseline consideration (Struben et al.).", "Consideration"], ["Consideration Memory Time", "7", "Year [1,10,0.5]", "Average time consideration persists without reinforcement.", "Consideration"], ["Social Influence Strength", "0.1", "1/Year [0,1,0.05]", "Exposure generated by peers, social media, habits per unit HF share.", "Consideration"], ["Marketing Effectiveness", "0.95", "Dmnl [0,2,0.05]", "Exposure per unit marketing spending per capita.", "Consideration"], ["Social Pressure and Habituation[Segment]", "Social Influence Strength * HF Share[Segment]", "1/Year", "R1 driver.", "Consideration"], ["Marketing Allocation[Segment]", "Population Fraction[Segment] * HF Share[Segment] / SUM( Population Fraction[Segment!] * HF Share[Segment!] )", "Dmnl", "Firms allocate marketing by segment revenue.", "Consideration"], ["Marketing Spending per Capita[Segment]", "HF Marketing Budget * Marketing Allocation[Segment] / Population Fraction[Segment]", "Index/Year", "", "Consideration"], ["Marketing Exposure[Segment]", "Marketing Effectiveness * Marketing Spending per Capita[Segment]", "1/Year", "R2 driver.", "Consideration"], ["Education Campaign Exposure[Segment]", "Switch 1a Consumer Education * Intervention Window * Education Intensity[Segment]", "1/Year", "1a driver.", "Consideration"], ["Background Exposure[Segment]", "INITIAL( Initial HF Consideration[Segment] / ( ( 1 - Initial HF Consideration[Segment] ) * Consideration Memory Time ) - Social Influence Strength * Initial HF Share[Segment] - Marketing Exposure[Segment] )", "1/Year", "Public/other exposure sources, calibrated for equilibrium.", "Consideration"], ["Consideration Gain[Segment]", "( 1 - HF Category Consideration[Segment] ) * ( Background Exposure[Segment] + Social Pressure and Habituation[Segment] + Marketing Exposure[Segment] + Education Campaign Exposure[Segment] )", "1/Year", "", "Consideration"], ["Consideration Loss[Segment]", "HF Category Consideration[Segment] / Consideration Memory Time", "1/Year", "", "Consideration"], ["HF Category Consideration[Segment]", "INTEG( Consideration Gain[Segment] - Consideration Loss[Segment] , Initial HF Consideration[Segment] )", "Dmnl", "STOCK - Propensity to consider the HF category.", "Consideration"], ["Initial HF Accessibility[Segment]", "0.455, 0.3", "Dmnl", "Baseline systems & institutions (Struben et al.).", "Institutions"], ["Access Adjustment Time", "10", "Year [1,15,0.5]", "Time for private access (stores, distribution, food service) to follow demand.", "Institutions"], ["Attribute Appeal Effect", "( Taste Attribute State * Price Attribute State ) ^ 0.5", "Dmnl", "Better products attract retailers and food services.", "Institutions"], ["Indicated HF Accessibility[Segment]", "MIN( 1 , HF Share[Segment] * Attribute Appeal Effect )", "Dmnl", "Access level the market would support.", "Institutions"], ["Private Access Development[Segment]", "( Indicated HF Accessibility[Segment] - HF Food Accessibility[Segment] ) / Access Adjustment Time", "1/Year", "R4 driver (market-driven).", "Institutions"], ["Public Access Programs[Segment]", "Switch 1c Food Accessibility * Intervention Window * Access Program Effort[Segment]", "1/Year", "1c driver.", "Institutions"], ["HF Food Accessibility[Segment]", "INTEG( Private Access Development[Segment] + Public Access Programs[Segment] , Initial HF Accessibility[Segment] )", "Dmnl", "STOCK - Systems & institutions: distribution, corner stores, school lunches, food services.", "Institutions"], ["HF Revenue", "SUM( Population Fraction[Segment!] * HF Share[Segment!] )", "Index/Year", "HF sales (volume index).", "Firms"], ["Initial HF Revenue", "SUM( Population Fraction[Segment!] * Initial HF Share[Segment!] )", "Index/Year", "", "Firms"], ["Revenue Perception Time", "1", "Year", "", "Firms"], ["Perceived HF Revenue", "SMOOTHI( HF Revenue , Revenue Perception Time , Initial HF Revenue )", "Index/Year", "Firm reinvestment base.", "Firms"], ["Initial R&D Intensity", "0.155", "Dmnl", "R&D as fraction of HF revenue at baseline (Struben et al.).", "Firms"], ["Initial Marketing Intensity", "0.21", "Dmnl", "Marketing as fraction of HF revenue at baseline (Struben et al.).", "Firms"], ["Initial R&D Budget Share", "Initial R&D Intensity / ( Initial R&D Intensity + Initial Marketing Intensity )", "Dmnl", "", "Firms"], ["Productivity Response", "0.6", "Dmnl [0,3,0.1]", "How strongly perceived R&D returns raise the desired R&D budget.", "Firms"], ["Marketing Saturation Response", "0.3", "Dmnl [0,3,0.1]", "Higher category consideration lowers the desired marketing budget.", "Firms"], ["Average Consideration", "SUM( Population Fraction[Segment!] * HF Category Consideration[Segment!] )", "Dmnl", "", "Firms"], ["Effect of Perceived Returns Pressure on Desired R&D Budget", "R&D Productivity ^ Productivity Response", "Dmnl", "", "Firms"], ["Desired R&D Budget Intensity", "Initial R&D Intensity * Effect of Perceived Returns Pressure on Desired R&D Budget", "Dmnl", "", "Firms"], ["Desired Marketing Budget Intensity", "Initial Marketing Intensity * ( ( 1 - INITIAL( Average Consideration ) ) / ( 1 - Average Consideration ) ) ^ ( - Marketing Saturation Response )", "Dmnl", "", "Firms"], ["Desired HF Budget Share to R&D", "Desired R&D Budget Intensity / ( Desired R&D Budget Intensity + Desired Marketing Budget Intensity )", "Dmnl", "", "Firms"], ["Time to Adjust Budget", "5", "Year [0.5,6,0.5]", "", "Firms"], ["R&D Budget Share Adjustment", "( Desired HF Budget Share to R&D - HF Budget Share to R&D ) / Time to Adjust Budget", "1/Year", "B loop: R&D budget correction.", "Firms"], ["HF Budget Share to R&D", "INTEG( R&D Budget Share Adjustment , Initial R&D Budget Share )", "Dmnl", "STOCK - firm decision (learning from the market).", "Firms"], ["Budget Intensity Adjustment", "( Desired R&D Budget Intensity + Desired Marketing Budget Intensity - HF Budget Intensity ) / Time to Adjust Budget", "1/Year", "R loop: R&D budget scaling.", "Firms"], ["HF Budget Intensity", "INTEG( Budget Intensity Adjustment , Initial R&D Intensity + Initial Marketing Intensity )", "Dmnl", "STOCK - total HF budget (R&D + marketing) as fraction of revenue.", "Firms"], ["Total HF Budget", "HF Budget Intensity * Perceived HF Revenue", "Index/Year", "Firm resources to the HF category.", "Firms"], ["Firm HF R&D Budget", "MAX( 0 , Total HF Budget * HF Budget Share to R&D - Crowding Out Fraction * External Innovation Funding )", "Index/Year", "Firms own HF R&D.", "Firms"], ["Initial Firm HF R&D Budget", "Initial R&D Intensity * Initial HF Revenue", "Index/Year", "", "Firms"], ["HF Marketing Budget", "Total HF Budget * ( 1 - HF Budget Share to R&D )", "Index/Year", "", "Firms"], ["Relative HF R&D Budget", "Firm HF R&D Budget / HF Revenue", "Dmnl", "R&D as fraction of HF revenue (0.155 at baseline).", "Outcomes"], ["Relative HF Marketing Budget", "HF Marketing Budget / HF Revenue", "Dmnl", "Marketing as fraction of HF revenue (0.21 at baseline).", "Outcomes"]];
+(function(){
+const $=s=>document.querySelector(s),D=FoodSD.DEF;
+// ---------- slider definitions ----------
+const CATS=[
+ {name:'Product & industry',c:'var(--cap)',items:[
+  ['fundA','High-end innovation',0,1,0.05,0,'Producers fund taste-led nutritious innovation (multiple of baseline firm HF R&D). Raises taste and price.','R3 product · intervention 2a'],
+  ['fundB','Affordable innovation',0,1,0.05,0,'Producers fund cost-led innovation. Improves price performance, slightly lowers taste.','R3 product · intervention 2b'],
+  ['boost','Directed technical change',0,5,0.1,0,'Government stimulates HF innovation across the supply chain: R&D support, standards, networks. Raises R&D productivity.','R3 product · intervention 3']]},
+ {name:'Consumer consideration',c:'var(--con)',items:[
+  ['eduL','Education, low-SES',0,0.06,0.002,0,'Public exposure and education programs for low-SES consumers (added exposure rate per year).','R1 socio-behavioural · intervention 1a'],
+  ['eduH','Education, high-SES',0,0.1,0.005,0,'Education and exposure programs for high-SES consumers.','R1 socio-behavioural · intervention 1a']]},
+ {name:'Price policy',c:'var(--pol)',items:[
+  ['subsidy','Healthy food subsidy',0,0.5,0.01,0,'Government subsidy improving the price performance of healthy food.','R3 attribute state · intervention 1b'],
+  ['tax','Low-health food tax',0,0.5,0.01,0,'Tax raising the price of low-health food (e.g., IEPS on sugary drinks).','Consumer choice · intervention 1b']]},
+ {name:'Food environment',c:'var(--ins)',items:[
+  ['accL','Accessibility, low-SES',0,0.12,0.005,0,'Publicly funded corner-store, school-food and distribution programs in low-SES areas (access built per year).','R4 built environment · intervention 1c'],
+  ['accH','Accessibility, high-SES',0,0.06,0.005,0,'Access programs in high-SES areas.','R4 built environment · intervention 1c']]},
+ {name:'Timing',c:'var(--tim)',items:[
+  ['intStart','Start year',2020,2035,1,2022,'Year all interventions begin.','All'],
+  ['intDur','Duration (years)',1,20,1,5,'How long interventions run (Struben used five years).','All'],
+  ['sustain','Program end',0,1,1,0,'Temporary: programs stop after the duration. Sustained: they continue to 2042.','All']]},
+ {name:'Assumptions',c:'var(--asm)',items:[
+  ['crowd','Crowding-out of own R&D',0,1,0.05,0.5,'Share of external innovation funding firms subtract from their own R&D.','Firm decisions'],
+  ['ce','Consideration elasticity',0.3,3,0.05,D.ce,'How strongly affinity responds to category consideration.','R1, R2'],
+  ['ae','Accessibility elasticity',0,2,0.05,D.ae,'How strongly affinity responds to the built food environment.','R4'],
+  ['psL','Price sensitivity, low-SES',0.2,3,0.05,D.psL,'Weight low-SES consumers give to price.','R3'],
+  ['memT','Consideration memory (yrs)',2,15,0.5,D.memT,'How long consideration persists without reinforcement.','R1, R2'],
+  ['accT','Access adjustment (yrs)',3,20,0.5,D.accT,'How fast private access follows demand.','R4']]}];
+const ALL={};CATS.forEach(c=>c.items.forEach(it=>ALL[it[0]]=Object.assign({cat:c},{k:it[0],l:it[1],mn:it[2],mx:it[3],st:it[4],def:it[5],d:it[6],loop:it[7]})));
+let V={};const resetV=()=>{for(const k in ALL)V[k]=ALL[k].def;};resetV();
+function status(k,v){const a=ALL[k];if(k==='intStart')return 'start '+v;if(k==='intDur')return v+' years';if(k==='sustain')return v?'sustained':'temporary';
+ if(a.cat.name==='Assumptions'){const r=v/a.def;return Math.abs(r-1)<0.02?'reference':(r>1?'higher':'lower');}
+ const r=(v-a.mn)/(a.mx-a.mn);return v<=0?'status quo':r<0.25?'low':r<0.5?'moderate':r<0.75?'high':'very high';}
+function fmt(k,v){if(['intStart','intDur','sustain'].includes(k))return '';const a=ALL[k];return a.st<0.01?v.toFixed(3):a.st<0.1?v.toFixed(2):v.toFixed(1);}
+// build sliders
+const host=$('#sliders');
+CATS.forEach(c=>{const box=document.createElement('div');box.className='cat';box.innerHTML=`<h3 style="background:${c.c}">${c.name}</h3>`;
+ c.items.forEach(([k])=>{const a=ALL[k];const d=document.createElement('div');d.className='sl';d.style.setProperty('--c',c.c);d.id='sl-'+k;
+  d.innerHTML=`<div class="row"><label class="name" for="in-${k}" style="color:${c.c}">${a.l}</label><button class="dots" aria-expanded="false" aria-label="About ${a.l}">⋯</button></div><input type="range" id="in-${k}" min="${a.mn}" max="${a.mx}" step="${a.st}"><div class="status"><span class="st" id="st-${k}"></span><span id="vv-${k}"></span></div><div class="pop">${a.d}<div class="lp">Acts on: ${a.loop}</div></div>`;
+  box.appendChild(d);const inp=d.querySelector('input');inp.addEventListener('input',()=>{V[k]=+inp.value;$('#preset').value='';syncOne(k);draw();});
+  const b=d.querySelector('.dots');b.addEventListener('click',()=>{const p=d.querySelector('.pop');p.classList.toggle('on');b.setAttribute('aria-expanded',p.classList.contains('on'));});});
+ host.appendChild(box);});
+function syncOne(k){$('#in-'+k).value=V[k];$('#st-'+k).textContent=status(k,V[k]);$('#vv-'+k).textContent=fmt(k,V[k]);$('#sl-'+k).classList.toggle('changed',Math.abs(V[k]-ALL[k].def)>1e-9);}
+const syncAll=()=>Object.keys(ALL).forEach(syncOne);
+// presets
+const PRE={'Baseline':{},
+ '1a Public nutritious-food exposure (low-SES)':{eduL:D.eduL},
+ '1b Subsidy + tax':{subsidy:D.subsidy,tax:D.tax},
+ '1c Food accessibility alone':{accL:D.accL,accH:D.accH},
+ '2a High-end nutritious innovation':{fundA:D.fund},
+ '2b Affordable nutritious innovation':{fundB:D.fund},
+ '3 Directed technical change':{boost:D.boost},
+ '4 Convergent innovation (3 + 1a + 1c)':{boost:D.boost,eduL:D.eduL,eduH:D.eduH,accL:D.accL,accH:D.accH},
+ '4 + 2a Convergent plus high-end':{boost:D.boost,eduL:D.eduL,eduH:D.eduH,accL:D.accL,accH:D.accH,fundA:D.fund},
+ '1a Education, sustained to 2042':{eduL:D.eduL,sustain:1}};
+Object.keys(PRE).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;$('#preset').appendChild(o);});
+$('#preset').addEventListener('change',e=>{if(!e.target.value)return;const keep={};CATS[5].items.forEach(([k])=>keep[k]=V[k]);resetV();Object.assign(V,keep,PRE[e.target.value]);syncAll();draw();});
+$('#reset').addEventListener('click',()=>{resetV();$('#preset').value='Baseline';syncAll();draw();});
+// map sliders -> model params
+function params(v,off){const p=Object.assign({},D,{intStart:v.intStart,intDur:v.intDur,sustain:v.sustain,crowd:v.crowd,ce:v.ce,ae:v.ae,psL:v.psL,memT:v.memT,accT:v.accT,
+ eduL:v.eduL,eduH:v.eduH,subsidy:v.subsidy,tax:v.tax,accL:v.accL,accH:v.accH,fundA:v.fundA,fundB:v.fundB,boost:v.boost,
+ sw1a:(v.eduL>0||v.eduH>0)?1:0,sw1bS:v.subsidy>0?1:0,sw1bT:v.tax>0?1:0,sw1c:(v.accL>0||v.accH>0)?1:0,sw2a:v.fundA>0?1:0,sw2b:v.fundB>0?1:0,sw3:v.boost>0?1:0});
+ if(off)Object.assign(p,{sw1a:0,sw1bS:0,sw1bT:0,sw1c:0,sw2a:0,sw2b:0,sw3:0});return p;}
+// ---------- graphs ----------
+const G={
+ cons:{t:'Food consumption by category and segment',u:'share of all food',stack:1,max:1,ser:[['HF high-SES','#2E7D57',r=>r.SH*.5],['HF low-SES','#8CCB9F',r=>r.SL*.5],['LH high-SES','#6B5B4F',r=>(1-r.SH)*.5],['LH low-SES','#C9B8A6',r=>(1-r.SL)*.5]]},
+ share:{t:'Healthy-food share of consumption',u:'fraction',ser:[['High-SES','var(--hi)',r=>r.SH],['Low-SES','var(--lo)',r=>r.SL]]},
+ gap:{t:'Equity gap (high-SES minus low-SES share)',u:'points',scale:100,ser:[['Equity gap','var(--hi)',r=>r.gap]]},
+ total:{t:'Total healthy-food share',u:'fraction',ser:[['Total','var(--con)',r=>r.tot]]},
+ cons2:{t:'Healthy-food category consideration',u:'dimensionless',ser:[['High-SES','var(--hi)',r=>r.CH],['Low-SES','var(--lo)',r=>r.CL]]},
+ access:{t:'Healthy-food systems & institutions',u:'dimensionless',ser:[['High-SES','var(--hi)',r=>r.AH],['Low-SES','var(--lo)',r=>r.AL]]},
+ budget:{t:'Firm healthy-food budgets',u:'fraction of HF revenue',ser:[['R&D','var(--cap)',r=>r.rdRel],['Marketing','var(--mkt)',r=>r.mkRel]]},
+ attr:{t:'Healthy-food attribute states',u:'index, 2020 = 1',ser:[['Taste','var(--con)',r=>r.taste],['Price performance','var(--ins)',r=>r.price]]},
+ util:{t:'Product utility by segment',u:'utility units',ser:[['High-SES','var(--hi)',r=>r.UH],['Low-SES','var(--lo)',r=>r.UL]]}};
+['g1','g2'].forEach((id,i)=>{const s=$('#'+id);Object.entries(G).forEach(([k,g])=>{const o=document.createElement('option');o.value=k;o.textContent=g.t;s.appendChild(o);});s.value=i?'gap':'cons';s.addEventListener('change',draw);});
+const NS='http://www.w3.org/2000/svg';const E=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
+function chart(host,leg,g,run,base,win){host.innerHTML='';const W=Math.max(320,Math.round(host.clientWidth||620)),H=W<520?250:330,m={l:46,r:12,t:12,b:26};const sc=g.scale||1;
+ const svg=E('svg',{viewBox:`0 0 ${W} ${H}`,width:'100%',role:'img','aria-label':g.t},host);svg.style.display='block';
+ const t=run.map(r=>r.t),X=v=>m.l+(v-2020)/22*(W-m.l-m.r);let lo,hi;
+ if(g.stack){lo=0;hi=1;}else{let a=1e9,b=-1e9;[run,base].forEach(src=>g.ser.forEach(s=>src.forEach(r=>{const v=s[2](r)*sc;a=Math.min(a,v);b=Math.max(b,v);})));const pad=Math.max((b-a)*.18,Math.abs(b)*.06,.01);lo=a-pad;hi=b+pad;if(a>=0&&lo<0)lo=0;}
+ const Y=v=>H-m.b-(v-lo)/(hi-lo)*(H-m.t-m.b);
+ const wr=E('rect',{x:X(win[0]),y:m.t,width:Math.max(0,X(Math.min(2042,win[1]))-X(win[0])),height:H-m.t-m.b},svg);wr.style.fill='var(--win)';const winRect=wr;
+ for(let i=0;i<=5;i++){const v=lo+(hi-lo)*i/5;const l=E('line',{x1:m.l,x2:W-m.r,y1:Y(v),y2:Y(v)},svg);l.style.stroke='var(--rule)';const tx=E('text',{x:m.l-6,y:Y(v)+4,'text-anchor':'end'},svg);tx.textContent=(Math.abs(hi-lo)<0.2?v.toFixed(3):Math.abs(hi-lo)<3?v.toFixed(2):v.toFixed(1));tx.style.fontSize='11px';tx.style.fill='var(--muted)';}
+ [2020,2025,2030,2035,2040].forEach(y=>{const tx=E('text',{x:X(y),y:H-8,'text-anchor':'middle'},svg);tx.textContent=y;tx.style.fontSize='11px';tx.style.fill='var(--muted)';});
+ leg.innerHTML='';
+ if(g.stack){let cum=run.map(()=>0);g.ser.forEach(s=>{const top=run.map((r,i)=>cum[i]+s[2](r));const d='M'+t.map((y,i)=>X(y)+','+Y(top[i])).join('L')+'L'+t.slice().reverse().map((y,j)=>{const i=t.length-1-j;return X(y)+','+Y(cum[i]);}).join('L')+'Z';const p=E('path',{d},svg);p.style.fill=s[1];p.style.opacity=.92;cum=top;leg.insertAdjacentHTML('beforeend',`<span><i class="sq" style="background:${s[1]}"></i>${s[0]}</span>`);});
+  const ov=E('rect',{x:winRect.getAttribute('x'),y:m.t,width:winRect.getAttribute('width'),height:H-m.t-m.b},svg);ov.style.fill='rgba(255,255,255,.12)';
+  const bl=base.map(r=>r.SH*.5+r.SL*.5);const p=E('path',{d:'M'+t.map((y,i)=>X(y)+','+Y(bl[i])).join('L'),fill:'none'},svg);p.style.stroke='#fff';p.style.strokeWidth=1.6;p.style.strokeDasharray='5 4';leg.insertAdjacentHTML('beforeend','<span><i style="border-color:var(--base);border-top-style:dashed"></i>Baseline healthy total</span>');}
+ if(!g.stack){g.ser.forEach(s=>{const pb=E('path',{d:'M'+t.map((y,i)=>X(y)+','+Y(s[2](base[i])*sc)).join('L'),fill:'none'},svg);pb.style.stroke='var(--base)';pb.style.strokeWidth=1.6;pb.style.strokeDasharray=g.ser.length>1?'5 4':'';});
+  g.ser.forEach(s=>{const p=E('path',{d:'M'+t.map((y,i)=>X(y)+','+Y(s[2](run[i])*sc)).join('L'),fill:'none'},svg);p.style.stroke=s[1];p.style.strokeWidth=2.8;p.style.strokeLinejoin='round';leg.insertAdjacentHTML('beforeend',`<span><i style="border-color:${s[1]}"></i>${s[0]}, current</span>`);});
+  leg.insertAdjacentHTML('beforeend','<span><i style="border-color:var(--base)"></i>Baseline</span>');}
+ leg.insertAdjacentHTML('beforeend','<span><i class="sq" style="background:var(--win);border:1px solid var(--rule)"></i>Intervention period</span>');
+ // hover
+ const cross=E('line',{y1:m.t,y2:H-m.b,x1:-10,x2:-10},svg);cross.style.stroke='var(--muted)';cross.style.strokeWidth=1;
+ const tip=document.createElement('div');tip.className='tip';host.appendChild(tip);
+ const move=ev=>{const rect=svg.getBoundingClientRect();const cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-rect.left;const vx=cx/rect.width*W;let yr=Math.round(2020+(vx-m.l)/(W-m.l-m.r)*22);yr=Math.max(2020,Math.min(2042,yr));const i=t.indexOf(yr);if(i<0)return;
+  cross.setAttribute('x1',X(yr));cross.setAttribute('x2',X(yr));
+  const fv=v=>(sc!==1?(v*sc).toFixed(1):v.toFixed(3));
+  tip.innerHTML=`<b>${yr}</b>`+g.ser.map(s=>`${s[0]}: ${fv(s[2](run[i]))}${g.stack?'':' <span style="opacity:.7">(base '+fv(s[2](base[i]))+')</span>'}`).join('<br>');
+  tip.style.display='block';const left=X(yr)/W*rect.width;tip.style.left=Math.min(rect.width-tip.offsetWidth-4,Math.max(4,left+10))+'px';tip.style.top='14px';};
+ svg.addEventListener('mousemove',move);svg.addEventListener('touchmove',move,{passive:true});svg.addEventListener('touchstart',move,{passive:true});
+ const hide=()=>{tip.style.display='none';cross.setAttribute('x1',-10);cross.setAttribute('x2',-10);};svg.addEventListener('mouseleave',hide);svg.addEventListener('touchend',()=>setTimeout(hide,1500));}
+const cum=o=>o.filter(r=>r.t>=2022).reduce((a,r)=>a+r.rdRel*r.tot,0);
+function draw(){const p=params(V),pb=params(V,1);const full=FoodSD.run(p).filter(r=>Number.isInteger(r.t)),base=FoodSD.run(pb).filter(r=>Number.isInteger(r.t));
+ const win=[p.intStart,p.sustain?2042:p.intStart+p.intDur];const anyOn=p.sw1a||p.sw1bS||p.sw1bT||p.sw1c||p.sw2a||p.sw2b||p.sw3;const w=anyOn?win:[0,0];
+ [['g1','gb1','lg1','u1'],['g2','gb2','lg2','u2']].forEach(([s,b,l,u])=>{const g=G[$('#'+s).value];$('#'+u).textContent=g.u;chart($('#'+b),$('#'+l),g,full,base,w);});
+ const e=full[full.length-1],be=base[base.length-1];
+ $('#rMain').textContent=Math.round(e.SL*100)+'%';$('#rMainS').textContent='Baseline '+Math.round(be.SL*100)+'%';$('#rGap').textContent=(e.gap*100).toFixed(1);
+ const sg=v=>(v>=0?'+':'')+v.toFixed(0)+'%';const scale=(e.tot/be.tot-1)*100,gap=(e.gap/be.gap-1)*100,rd=(cum(full)/cum(base)-1)*100;
+ $('#kS').textContent=sg(scale);$('#kG').textContent=sg(gap);$('#kR').textContent=sg(rd);
+ $('#kG').style.color=gap<-1?'var(--con)':gap>1?'var(--lo)':'';
+ const c=[];if(!anyOn)c.push('Status quo: each segment\'s loops hold it at its baseline equilibrium, so the gap persists.');
+ else{const pk=Math.max(...full.filter(x=>x.t>=p.intStart&&x.t<=p.intStart+p.intDur+1).map(x=>x.SL))-be.SL,end=e.SL-be.SL;
+  if(pk>0.01&&end<pk*0.4&&!p.sustain)c.push(`Low-SES gains fade after the program: ${Math.round(pk*100)} pts at peak, ${Math.round(end*100)} by 2042.`);else if(end>0.03)c.push(`Low-SES gains persist (+${(end*100).toFixed(1)} pts by 2042): lasting infrastructure was built.`);
+  if(gap>5)c.push('The gap widens: benefits concentrate where infrastructure and purchasing power already exist.');else if(gap<-25)c.push('The gap closes substantially.');
+  if(rd>20)c.push('Firms raise healthy-food R&D: improved returns pull private investment in.');if(rd<-1&&(p.sw2a||p.sw2b))c.push('External innovation funds partly crowd out firms\' own R&D.');
+  if(p.sw3&&p.sw1a&&p.sw1c)c.push('Convergent package: all four loops engage together.');else if(p.sw3)c.push('Directed change scales the market; add education and access to lift low-SES consumers.');}
+ $('#ins').innerHTML=c.map(x=>'<li>'+x+'</li>').join('');
+ if(modelBuilt){$('#cldM').innerHTML='';Dg.cld($('#cldM'),p);}}
+// other views
+let modelBuilt=false,staticBuilt=false;
+function buildModel(){if(modelBuilt)return;modelBuilt=true;Dg.stockflow($('#sfM'));Dg.budget($('#budM'));Dg.matrix($('#matM'),{});}
+function buildStatic(){if(staticBuilt)return;staticBuilt=true;const SC=FoodSD.SCEN;
+ const T=[['s1','Total HF share',2027,.384,'tot'],['s1','Total HF share',2042,.380,'tot'],['s2a','HF share high-SES',2042,.49,'SH'],['s2a','HF share low-SES',2042,.303,'SL'],['s2b','HF share low-SES',2042,.31,'SL'],['s3','HF share high-SES',2042,.52,'SH'],['s3','HF share low-SES',2042,.35,'SL'],['s3','Firm R&D peak',2027,.245,'rdRel'],['s4','HF share high-SES',2042,.545,'SH'],['s4','HF share low-SES',2042,.45,'SL'],['s4','S&I low-SES',2042,.50,'AL']];
+ const ca={};T.forEach(([k,l,y,tg,v])=>{ca[k]=ca[k]||FoodSD.run(SC[k].set);const x=ca[k].find(r=>r.t===y);$('#calT tbody').insertAdjacentHTML('beforeend',`<tr><td>${SC[k].label}</td><td>${l}</td><td>${y}</td><td class="n">${tg.toFixed(3)}</td><td class="n">${x[v].toFixed(3)}</td></tr>`);});
+ const b=FoodSD.run({}),be=b[b.length-1];Object.entries(PRE).forEach(([n,pr])=>{if(n==='Baseline')return;const v=Object.assign({},V);for(const k in ALL)v[k]=ALL[k].def;Object.assign(v,pr);const o=FoodSD.run(params(v)),e=o[o.length-1];const f=x=>(x>=0?'+':'')+x.toFixed(1)+'%';
+  $('#metT tbody').insertAdjacentHTML('beforeend',`<tr><td>${n}</td><td class="n">${f((e.tot/be.tot-1)*100)}</td><td class="n">${f((e.gap/be.gap-1)*100)}</td><td class="n">${f((cum(o)/cum(b)-1)*100)}</td><td class="n">${(e.SL*100).toFixed(1)}%</td></tr>`);});
+ const vt=$('#varT tbody');VARS.forEach(v=>vt.insertAdjacentHTML('beforeend',`<tr><td><b>${v[0]}</b></td><td>${v[4]}</td><td><code>${v[1].replace(/</g,'&lt;')}</code></td><td>${v[2]}</td><td>${v[3]}</td></tr>`));
+ $('#vq').addEventListener('input',e=>{const q=e.target.value.toLowerCase();vt.querySelectorAll('tr').forEach(tr=>tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none');});}
+document.querySelectorAll('.menu button[data-v]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.menu button[data-v]').forEach(x=>x.setAttribute('aria-selected',x===b?'true':'false'));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));
+ if(b.dataset.v==='model'){buildModel();$('#cldM').innerHTML='';Dg.cld($('#cldM'),params(V));}if(b.dataset.v==='calib'||b.dataset.v==='vars')buildStatic();window.scrollTo(0,0);}));
+syncAll();$('#preset').value='Baseline';draw();window.__ready=true;
+let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,150);});
+window.__setPreset=n=>{$('#preset').value=n;$('#preset').dispatchEvent(new Event('change'));};
+})();
+</script></body></html>
